@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+install:
+  - docker build -t lgatica/node-runtime:latest .
+
+script:
+  - docker run --rm lgatica/node-runtime:latest cat /etc/alpine-release
+
+before_deploy:
+  - echo "$DOCKER_PASSWORD" | docker login -u="$DOCKER_USERNAME" --password-stdin
+
+deploy:
+  provider: script
+  script: docker push lgatica/node-runtime:latest
+  skip_cleanup: true
+  on:
+    branch: master
+
+notifications:
+  email: false
